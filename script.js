@@ -13,7 +13,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 let map, mapEvent;
 
-if (navigator.geolocation) {
+if (navigator.geolocation)
   navigator.geolocation.getCurrentPosition(
     function (position) {
       const { latitude, longitude } = position.coords,
@@ -38,23 +38,33 @@ if (navigator.geolocation) {
     }
   );
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    const { lat, lng } = mapEvent.latlng,
-      clickCoords = [lat, lng];
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  inputDistance.value =
+    inputDuration.value =
+    inputCadence.value =
+    inputElevation.value =
+      '';
 
-    L.marker(clickCoords)
-      .addTo(map)
-      .bindPopup(
-        L.popup({
-          maxWidth: 250,
-          minWidth: 100,
-          autoClose: false,
-          closeOnClick: false,
-          className: 'running-popup',
-        })
-      )
-      .setPopupContent('Running')
-      .openPopup();
-  });
-}
+  const { lat, lng } = mapEvent.latlng,
+    clickCoords = [lat, lng];
+
+  L.marker(clickCoords)
+    .addTo(map)
+    .bindPopup(
+      L.popup({
+        maxWidth: 250,
+        minWidth: 100,
+        autoClose: false,
+        closeOnClick: false,
+        className: 'running-popup',
+      })
+    )
+    .setPopupContent('Running')
+    .openPopup();
+});
+
+inputType.addEventListener('change', function () {
+  inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
+  inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+});
