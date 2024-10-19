@@ -11,16 +11,14 @@ const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
 
-let map, mapEvent;
-
 class App {
   #map;
   #mapEvent;
 
   constructor() {
     this._getPosition();
-    form.addEventListener('submit', this._showForm.bind(this));
-    inputType.addEventListener('change', this._toggleElevationField.bind(this));
+    form.addEventListener('submit', this._newWorkout.bind(this));
+    inputType.addEventListener('change', this._toggleElevationField);
   }
 
   _getPosition() {
@@ -45,17 +43,22 @@ class App {
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
 
-    this.#map.on('click', this._clickMapCallback.bind(this));
+    this.#map.on('click', this._showForm.bind(this));
   }
 
-  _clickMapCallback(mapE) {
+  _showForm(mapE) {
     //console.log(this);
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputDistance.focus();
   }
 
-  _showForm(e) {
+  _toggleElevationField() {
+    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
+    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
+  }
+
+  _newWorkout(e) {
     e.preventDefault();
     inputDistance.value =
       inputDuration.value =
@@ -80,13 +83,6 @@ class App {
       .setPopupContent('Running')
       .openPopup();
   }
-
-  _toggleElevationField() {
-    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
-    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
-  }
-  
-  _newWorkout() {}
 }
 
 const app = new App();
