@@ -73,11 +73,13 @@ class Cycling extends Workout {
 ///////// APPLICATION ARCHITECTURE /////////
 class App {
   #map;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
 
   constructor() {
     this._getPosition();
+    this._getLocalStorage();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
@@ -98,7 +100,7 @@ class App {
     const { latitude, longitude } = position.coords,
       coords = [latitude, longitude];
 
-    this.#map = L.map('map').setView(coords, 13);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
@@ -106,10 +108,11 @@ class App {
     }).addTo(this.#map);
 
     this.#map.on('click', this._showForm.bind(this));
+    this.#workouts.forEach(work => this._renderWorkoutMarker(work));
   }
 
   _showForm(mapE) {
-    //console.log(this);
+    
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputDistance.focus();
@@ -168,13 +171,15 @@ class App {
     }
 
     this.#workouts.push(workout);
-    //console.log(this.#workouts);
+    
 
     this._renderWorkoutMarker(workout);
 
     this._renderWorkout(workout);
 
     this._hideForm();
+
+    this._setLocalStorage();
   }
 
   _renderWorkoutMarker(workout) {
@@ -245,11 +250,28 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    //console.log(workoutEl);
+    
 
     if (!workoutEl) return;
     const workout = this.#workouts.find(wk => wk.id === +workoutEl.dataset.id);
-    console.log(workout);
+    
+
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: { duration: 1 },
+    });
+  }
+
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+    
+    if (!data) return;
+    this.#workouts = data;
+    this.#workouts.forEach(work => this._renderWorkout(work));
   }
 }
 
