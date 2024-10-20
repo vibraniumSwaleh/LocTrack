@@ -13,7 +13,7 @@ const inputElevation = document.querySelector('.form__input--elevation');
 
 class Workout {
   date = new Date();
-  id = (this.date + '').slice(-10);
+  id = Date.now();
 
   constructor(coords, distance, duration) {
     this.coords = coords; // [lat, lng]
@@ -47,11 +47,6 @@ class Cycling extends Workout {
     return this.speed;
   }
 }
-
-const run1 = new Running([39, -12], 5.2, 24, 178);
-const cycle1 = new Cycling([39, -12], 27, 27, 523);
-console.log(run1);
-console.log(cycle1);
 
 ///////// APPLICATION ARCHITECTURE /////////
 class App {
@@ -103,6 +98,25 @@ class App {
 
   _newWorkout(e) {
     e.preventDefault();
+
+    const type = inputType.value;
+    const distance = +inputDistance.value;
+    const duration = +inputDuration.value;
+
+    if (type === 'running') {
+      const cadence = +inputCadence.value;
+      if (
+        !Number.isFinite(distance) ||
+        !Number.isFinite(duration) ||
+        !Number.isFinite(cadence)
+      )
+        return alert('Input have to be positive numbers!');
+    }
+
+    if (type === 'cycling') {
+      const elevation = +inputElevation.value;
+    }
+
     inputDistance.value =
       inputDuration.value =
       inputCadence.value =
