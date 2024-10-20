@@ -112,7 +112,6 @@ class App {
   }
 
   _showForm(mapE) {
-    
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputDistance.focus();
@@ -171,7 +170,6 @@ class App {
     }
 
     this.#workouts.push(workout);
-    
 
     this._renderWorkoutMarker(workout);
 
@@ -250,11 +248,9 @@ class App {
 
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
-    
 
     if (!workoutEl) return;
     const workout = this.#workouts.find(wk => wk.id === +workoutEl.dataset.id);
-    
 
     this.#map.setView(workout.coords, this.#mapZoomLevel, {
       animate: true,
@@ -268,11 +264,17 @@ class App {
 
   _getLocalStorage() {
     const data = JSON.parse(localStorage.getItem('workouts'));
-    
+
     if (!data) return;
     this.#workouts = data;
     this.#workouts.forEach(work => this._renderWorkout(work));
   }
+
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
+  }
 }
 
 const app = new App();
+// app.reset(); // Use to reset delete workouts
