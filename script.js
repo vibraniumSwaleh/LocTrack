@@ -80,6 +80,7 @@ class App {
     this._getPosition();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
   _getPosition() {
@@ -167,7 +168,7 @@ class App {
     }
 
     this.#workouts.push(workout);
-    console.log(workout);
+    //console.log(this.#workouts);
 
     this._renderWorkoutMarker(workout);
 
@@ -188,7 +189,9 @@ class App {
           className: `${workout.type}-popup`,
         })
       )
-      .setPopupContent(`${workout.type}`)
+      .setPopupContent(
+        `${workout.type === 'running' ? '🏃' : '🚴'}${workout.description}`
+      )
       .openPopup();
   }
 
@@ -238,6 +241,15 @@ class App {
     </li>`;
 
     form.insertAdjacentHTML('afterend', html);
+  }
+
+  _moveToPopup(e) {
+    const workoutEl = e.target.closest('.workout');
+    //console.log(workoutEl);
+
+    if (!workoutEl) return;
+    const workout = this.#workouts.find(wk => wk.id === +workoutEl.dataset.id);
+    console.log(workout);
   }
 }
 
